@@ -1,16 +1,16 @@
 #**************************************************************************************************#
 #                                                                                                  #
-# ppt_to_pdf                                                                                       #
-# Saves each PowerPoint presentation as a PDF file.                                                #
+# ppt_set_title                                                                                    #
+# Sets the title of each PowerPoint presentation equal to the filename.                            #
 #                                                                                                  #
-# Usage: ppt_to_pdf [file]...                                                                      #
+# Usage: ppt_set_title [file]...                                                                   #
 #                                                                                                  #
 # Authors: S.G.M. Neves                                                                            #
 #                                                                                                  #
 #**************************************************************************************************#
 
 # Import modules
-from comtypes.client import Constants, CreateObject
+from comtypes.client import CreateObject
 import glob
 import os
 import sys
@@ -27,9 +27,6 @@ def main():
     # Open PowerPoint application
     pp = CreateObject("Powerpoint.Application")
 
-    # Get the constant that specifies the PDF file format
-    pdf_format = Constants(pp).ppSaveAsPDF
-
     for filepath in filepaths:
 
         # Check if the file exists
@@ -43,10 +40,11 @@ def main():
         # Open PowerPoint file
         prs = pp.Presentations.Open(filepath)
 
-        # Save as PDF
-        prs.SaveAs(filepath.replace('.pptx', '.pdf'), pdf_format)
+        # Set the title
+        prs.BuiltinDocumentProperties['Title'] = os.path.splitext(os.path.basename(filepath))[0]
 
-        # Close PowerPoint file
+        # Save and close PowerPoint file
+        prs.Save()
         prs.Close()
 
     # Close PowerPoint application
